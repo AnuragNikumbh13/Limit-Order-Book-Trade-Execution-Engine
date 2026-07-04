@@ -125,3 +125,20 @@ Incoming orders are processed using a BlockingQueue.
 ### Reason
 
 This separates API request handling from order matching, improving responsiveness and supporting concurrent processing. 
+
+## Decision 11 - Portfolio Storage Strategy
+
+### Decision
+
+The Portfolio stores the current holdings as a summary using the Volume Weighted Average Price (VWAP).
+
+Individual executions are not stored in the Portfolio. Instead, every executed trade is permanently stored in the Trade table.
+
+### Reason
+
+This approach provides the best balance between performance and historical accuracy.
+
+- The Portfolio table remains compact and can be queried efficiently.
+- The Trade table preserves the complete execution history.
+- Detailed analytics, trade reconstruction, and future reporting can be generated from the Trade table.
+- Portfolio loading remains fast while historical information is never lost.
