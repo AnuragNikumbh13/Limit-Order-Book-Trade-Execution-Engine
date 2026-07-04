@@ -21,9 +21,9 @@ A backend simulation of an electronic stock exchange implementing asynchronous o
 
 - [x] Project Vision
 - [x] Business Requirements
-- [ ] System Architecture
-- [ ] Database Design
-- [ ] Functional Requirements
+- [x] System Architecture
+- [x] Database Design
+- [x] Functional Requirements
 - [ ] Spring Boot Development
 - [ ] Testing
 - [ ] Power BI Dashboard
