@@ -43,4 +43,10 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    private void InitializeUser(){
+        availableBalance=new BigDecimal("100000");
+        blockedBalance=new BigDecimal("0");
+    }
+
 }
