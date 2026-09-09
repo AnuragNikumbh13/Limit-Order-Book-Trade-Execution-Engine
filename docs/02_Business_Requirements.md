@@ -2,102 +2,247 @@
 
 ## 1. Introduction
 
-This document defines the business requirements for the High-Frequency Trading (HFT) Order Matching Engine.
-It describes the core capabilities that the system must provide from a business perspective without focusing on technical implementation details.
+This document defines the business requirements for the
+Limit Order Book & Trade Execution Engine.
+
+It describes the core capabilities that the system must provide
+from a business perspective without focusing on technical
+implementation details.
 
 ---
 
 ## 2. User Management
 
-### BR-001
-The system shall allow new users to register.
+### BR-001 — User Registration
 
-### BR-002
-The system shall allow registered users to authenticate securely.
+The system shall allow new users to register using a unique
+username and email address.
 
-### BR-003
-The system shall maintain user profile information.
+### BR-002 — User Authentication
 
-### BR-004
-The system shall maintain each user's available cash balance and portfolio holdings.
+The system shall allow registered users to authenticate using
+their email and password.
+
+### BR-003 — Secure Credentials
+
+The system shall securely store user credentials and prevent
+unauthorized access to protected system functionality.
 
 ---
 
 ## 3. Order Management
 
-### BR-005
-The system shall allow users to place BUY Limit Orders.
+### BR-004 — BUY Limit Orders
 
-### BR-006
-The system shall allow users to place SELL Limit Orders.
+The system shall allow authenticated users to place BUY limit orders.
 
-### BR-007
-The system shall validate orders before accepting them.
+### BR-005 — SELL Limit Orders
 
-### BR-008
-The system shall allow users to cancel pending orders.
+The system shall allow authenticated users to place SELL limit orders.
 
-### BR-009
-The system shall allow users to view their order history.
+### BR-006 — Order Validation
+
+The system shall validate order requests before accepting them.
+
+### BR-007 — Order Information
+
+Each order shall maintain the following information:
+
+- Order ID
+- Associated user
+- Trading symbol
+- Order type
+- Original quantity
+- Remaining quantity
+- Limit price
+- Order status
+- Creation timestamp
+
+### BR-008 — Order Lifecycle
+
+The system shall maintain the current status and remaining quantity
+of each order throughout its lifecycle.
+
+### BR-009 — Order History
+
+The system shall allow retrieval of stored orders and order history.
 
 ---
 
 ## 4. Order Matching
 
-### BR-010
-The system shall match BUY and SELL orders using the Price-Time Priority rule.
+### BR-010 — Price-Time Priority
 
-### BR-011
-The system shall support partial order execution whenever applicable.
+The system shall match compatible BUY and SELL orders using
+Price-Time Priority.
 
-### BR-012
-The system shall maintain separate BUY and SELL Order Books.
+Priority shall be determined by:
 
-### BR-013
-The system shall keep unmatched orders pending until a compatible order is available or the order is cancelled.
+1. Best available price
+2. Earlier eligible order at the same price
 
----
+### BR-011 — BUY Matching Condition
 
-## 5. Trade Management
+A BUY order shall be eligible for matching when:
 
-### BR-014
-The system shall execute successful trades.
+```text
+BUY Price >= SELL Price
+```
 
-### BR-015
-The system shall generate a trade record for every executed transaction.
+### BR-012 — SELL Matching Condition
 
-### BR-016
-The system shall update buyer and seller portfolios after every successful trade.
+A SELL order shall be eligible for matching when:
 
----
+```text
+SELL Price <= BUY Price
+```
 
-## 6. Audit & Reporting
+### BR-013 — Partial Execution
 
-### BR-017
-The system shall maintain an audit trail for every order.
+The system shall support partial order execution when the quantities
+of matching orders are different.
 
-### BR-018
-The system shall maintain complete trade history.
+### BR-014 — Multiple Executions
 
-### BR-019
-The system shall store structured trading data for future analytics and reporting.
+The system shall allow a single incoming order to execute against
+multiple compatible opposite-side orders.
 
----
+### BR-015 — Unmatched Orders
 
-## 7. Security
-
-### BR-020
-Only authenticated users shall be allowed to access protected system features.
+Orders that cannot currently be matched shall remain OPEN with their
+remaining quantity available for future matching.
 
 ---
 
-## 8. Future Enhancements
+## 5. Order Status Management
 
-The following business requirements are intentionally excluded from Version 1 and may be implemented in future releases.
+### BR-016 — Order Statuses
 
-- Market Orders
-- Stop Loss Orders
-- Real-time Market Data
-- WebSocket Notifications
-- Kafka-based Event Streaming
-- Microservices Architecture
+The system shall maintain the following order statuses:
+
+- ORDER_PLACED
+- OPEN
+- PARTIALLY_FILLED
+- FILLED
+
+### BR-017 — Partial Fill Status
+
+An order shall be marked `PARTIALLY_FILLED` when only a portion
+of its quantity has been executed.
+
+### BR-018 — Filled Status
+
+An order shall be marked `FILLED` when its remaining quantity
+reaches zero.
+
+---
+
+## 6. Trade Management
+
+### BR-019 — Trade Execution
+
+The system shall create a trade whenever compatible BUY and SELL
+orders are successfully matched.
+
+### BR-020 — Trade per Execution
+
+The system shall generate a separate Trade record for every
+successful execution.
+
+### BR-021 — Trade Information
+
+Each trade record shall contain:
+
+- Trade ID
+- Symbol
+- Executed price
+- Executed quantity
+- Buy order
+- Sell order
+
+### BR-022 — Trade History
+
+The system shall maintain trade history for executed trades.
+
+---
+
+## 7. Data Integrity
+
+### BR-023 — Transactional Processing
+
+Order placement and related trade execution shall be processed
+as a single transactional operation.
+
+### BR-024 — Rollback on Failure
+
+If an unchecked failure occurs during transactional order processing,
+the associated database changes shall be rolled back to maintain
+data consistency.
+
+---
+
+## 8. Order & Trade Retrieval
+
+### BR-025 — All Orders
+
+The system shall provide access to all stored orders.
+
+### BR-026 — Order by ID
+
+The system shall allow retrieval of an individual order by its ID.
+
+### BR-027 — Orders by User
+
+The system shall allow retrieval of orders belonging to a specific user.
+
+### BR-028 — All Trades
+
+The system shall provide access to all stored trades.
+
+### BR-029 — Trade by ID
+
+The system shall allow retrieval of an individual trade by its ID.
+
+---
+
+## 9. Security
+
+### BR-030 — Protected Business APIs
+
+Only authenticated users shall be allowed to access protected
+business functionality.
+
+### BR-031 — Token-Based Authentication
+
+The system shall use token-based authentication for protected APIs.
+
+### BR-032 — Password Protection
+
+User passwords shall not be stored in plain text.
+
+---
+
+## 10. Analytics & Reporting
+
+### BR-033 — Analytics Data
+
+The system shall provide structured order and trade data for analytics.
+
+### BR-034 — Order & Trade Metrics
+
+The system shall support analysis of:
+
+- Total orders
+- Total trades
+
+### BR-035 — BUY / SELL Distribution
+
+The system shall support analysis of BUY versus SELL order distribution.
+
+### BR-036 — Order Status Distribution
+
+The system shall support analysis of order status distribution.
+
+### BR-037 — Trade Volume
+
+The system shall support analysis of executed trade volume by symbol.
