@@ -8,6 +8,9 @@ target/
 # Maven Wrapper JAR
 .mvn/wrapper/maven-wrapper.jar
 
+#application.properties
+src/main/resources/application.properties
+
 # Logs
 *.log
 

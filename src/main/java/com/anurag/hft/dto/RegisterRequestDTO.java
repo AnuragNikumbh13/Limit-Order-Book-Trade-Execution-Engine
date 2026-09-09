@@ -16,13 +16,16 @@ public class RegisterRequestDTO {
     private String email;
 
     @NotBlank(message="Password Should not be blank")
-    @Size(min = 8,max = 20,message="Password should be of minimum 6 characters")
+    @Size(min = 8,max = 20,message="Password should be of minimum 8 characters")
     private String password;
 
     public RegisterRequestDTO(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public RegisterRequestDTO() {
     }
 
     public String getUsername() {
